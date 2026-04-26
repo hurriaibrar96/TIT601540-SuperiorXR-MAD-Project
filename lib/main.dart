@@ -433,3 +433,260 @@ class ProfileScreen extends StatelessWidget {
     );
   }
 }
+//Lab 8 by Saboor Ahmad_059
+import 'package:flutter/material.dart';
+
+// SuperiorXR uses:
+// - Cards for featured modules and campus highlights
+// - ListView/ListTile for announcements, destinations, and chatbot history
+// - GridView for quick-access services and campus facilities
+// - CustomScrollView with Slivers for the dynamic home dashboard
+
+void main() {
+  runApp(const SuperiorXRApp());
+}
+
+class SuperiorXRApp extends StatelessWidget {
+  const SuperiorXRApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      title: 'SuperiorXR',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+        scaffoldBackgroundColor: const Color(0xFFF5F7FA),
+      ),
+      home: const MainNavigationScreen(),
+    );
+  }
+}
+
+class MainNavigationScreen extends StatefulWidget {
+  const MainNavigationScreen({super.key});
+
+  @override
+  State<MainNavigationScreen> createState() => _MainNavigationScreenState();
+}
+
+class _MainNavigationScreenState extends State<MainNavigationScreen> {
+  int _selectedIndex = 0;
+
+  // I have added this variable to store data returned from Gratitude page (Lab 8)
+  String _selectedPlace = "...";
+
+  final List<Widget> _screens = const [
+    HomeScreen(),
+    ARNavigationScreen(),
+    ChatbotScreen(),
+    VRTourScreen(),
+    ProfileScreen(),
+  ];
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
+
+  // I have added Navigator.push to open About Page (Lab 8)
+  void _openAbout(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        fullscreenDialog: true,
+        builder: (context) => const AboutPage(),
+      ),
+    );
+  }
+
+  // I have added Navigator with return value (Lab 8)
+  void _openGratitude(BuildContext context) async {
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const GratitudePage(),
+      ),
+    );
+
+    setState(() {
+      _selectedPlace = result ?? "...";
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("SuperiorXR ($_selectedPlace)"),
+
+        // I have added IconButton to open About page using Navigator (Lab 8)
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.info_outline),
+            onPressed: () => _openAbout(context),
+          )
+        ],
+      ),
+
+      body: _screens[_selectedIndex],
+
+      // I have added FloatingActionButton to open Gratitude page (Lab 8)
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => _openGratitude(context),
+        child: const Icon(Icons.sentiment_satisfied),
+      ),
+
+      // I have used BottomNavigationBar (Lab 8 widget)
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _selectedIndex,
+        onTap: _onItemTapped,
+        type: BottomNavigationBarType.fixed,
+        selectedItemColor: Colors.blue,
+        unselectedItemColor: Colors.grey,
+        items: const [
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.navigation), label: 'AR Nav'),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.smart_toy), label: 'Chatbot'),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.view_in_ar), label: 'VR Tour'),
+          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
+        ],
+      ),
+
+      // I have added BottomAppBar with notch (Lab 8 optional feature)
+      bottomSheet: BottomAppBar(
+        shape: const CircularNotchedRectangle(),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: const [
+            Icon(Icons.home),
+            Icon(Icons.map),
+            SizedBox(width: 40),
+            Icon(Icons.person),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+////////////////////////////////////////////////////////
+/// I have added About Page for Navigator (Lab 8)
+////////////////////////////////////////////////////////
+class AboutPage extends StatelessWidget {
+  const AboutPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text("About")),
+      body: const Center(
+        child: Text("This is SuperiorXR Campus Guide App"),
+      ),
+    );
+  }
+}
+
+////////////////////////////////////////////////////////
+/// I have added Gratitude Page with Radio buttons (Lab 8)
+////////////////////////////////////////////////////////
+class GratitudePage extends StatefulWidget {
+  const GratitudePage({super.key});
+
+  @override
+  State<GratitudePage> createState() => _GratitudePageState();
+}
+
+class _GratitudePageState extends State<GratitudePage> {
+  int _value = -1;
+  List<String> places = ["Library", "Cafe", "Lab"];
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text("Select Place"),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.check),
+            onPressed: () => Navigator.pop(context, places[_value]),
+          )
+        ],
+      ),
+      body: Column(
+        children: List.generate(places.length, (index) {
+          return Row(
+            children: [
+              Radio(
+                value: index,
+                groupValue: _value,
+                onChanged: (val) {
+                  setState(() {
+                    _value = val!;
+                  });
+                },
+              ),
+              Text(places[index])
+            ],
+          );
+        }),
+      ),
+    );
+  }
+}
+
+////////////////////////////////////////////////////////
+/// I have implemented Hero Animation (Lab 8)
+////////////////////////////////////////////////////////
+class ARNavigationScreen extends StatelessWidget {
+  const ARNavigationScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('AR Navigation')),
+      body: Center(
+        child: GestureDetector(
+          child: const Hero(
+            tag: "arHero",
+            child: Icon(Icons.navigation, size: 100, color: Colors.blue),
+          ),
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const ARDetailScreen(),
+              ),
+            );
+          },
+        ),
+      ),
+    );
+  }
+}
+
+////////////////////////////////////////////////////////
+/// I have added Hero destination screen (Lab 8)
+////////////////////////////////////////////////////////
+class ARDetailScreen extends StatelessWidget {
+  const ARDetailScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    double size = MediaQuery.of(context).size.shortestSide / 2;
+
+    return Scaffold(
+      appBar: AppBar(title: const Text("AR Detail")),
+      body: Center(
+        child: Hero(
+          tag: "arHero",
+          child: Icon(Icons.navigation, size: size, color: Colors.blue),
+        ),
+      ),
+    );
+  }
+}
