@@ -690,3 +690,242 @@ class ARDetailScreen extends StatelessWidget {
     );
   }
 }
+import 'package:flutter/material.dart';
+
+void main() {
+  runApp(const CampusGuideApp());
+}
+
+// Lab 9
+// Flutter TabBar and Drawer
+// By Javeria Nawal
+// AI Powered AR/VR Campus Guide
+
+class CampusGuideApp extends StatelessWidget {
+  const CampusGuideApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      title: 'AI Campus Guide',
+      home: const HomeScreen(),
+    );
+  }
+}
+
+class HomeScreen extends StatefulWidget {
+  const HomeScreen({super.key});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen>
+    with SingleTickerProviderStateMixin {
+  late TabController _tabController;
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(
+      length: 3,
+      vsync: this,
+    );
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text(
+          "AI Powered AR/VR Campus Guide",
+        ),
+      ),
+      drawer: const LeftDrawerWidget(),
+      endDrawer: const RightDrawerWidget(),
+      body: TabBarView(
+        controller: _tabController,
+        children: const [
+          ARVRPage(),
+          AIPage(),
+          ReminderPage(),
+        ],
+      ),
+      bottomNavigationBar: Material(
+        child: TabBar(
+          controller: _tabController,
+          labelColor: Colors.deepPurple,
+          tabs: const [
+            Tab(
+              icon: Icon(Icons.view_in_ar),
+              text: 'AR/VR',
+            ),
+            Tab(
+              icon: Icon(Icons.smart_toy),
+              text: 'AI Guide',
+            ),
+            Tab(
+              icon: Icon(Icons.notifications),
+              text: 'Reminders',
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class ARVRPage extends StatelessWidget {
+  const ARVRPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView(
+      padding: const EdgeInsets.all(20),
+      children: const [
+        Icon(
+          Icons.view_in_ar,
+          size: 100,
+          color: Colors.deepPurple,
+        ),
+        SizedBox(height: 20),
+        ListTile(
+          leading: Icon(Icons.map),
+          title: Text("Smart Navigation"),
+        ),
+        ListTile(
+          leading: Icon(Icons.location_on),
+          title: Text("Indoor Tracking"),
+        ),
+        ListTile(
+          leading: Icon(Icons.vrpano),
+          title: Text("360 VR Tours"),
+        ),
+      ],
+    );
+  }
+}
+
+class AIPage extends StatelessWidget {
+  const AIPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: const [
+          Icon(
+            Icons.smart_toy,
+            size: 100,
+            color: Colors.deepPurple,
+          ),
+          SizedBox(height: 20),
+          Text(
+            "AI Campus Assistant",
+            style: TextStyle(
+              fontSize: 28,
+              fontWeight: FontWeight.bold,
+            ),
+          )
+        ],
+      ),
+    );
+  }
+}
+
+class ReminderPage extends StatelessWidget {
+  const ReminderPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView(
+      children: const [
+        ListTile(
+          leading: Icon(Icons.event),
+          title: Text("Campus Events"),
+        ),
+        ListTile(
+          leading: Icon(Icons.assignment),
+          title: Text("Assignments"),
+        ),
+        ListTile(
+          leading: Icon(Icons.school),
+          title: Text("Exam Alerts"),
+        ),
+      ],
+    );
+  }
+}
+
+class MenuListTileWidget extends StatelessWidget {
+  const MenuListTileWidget({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        ListTile(
+          leading: Icon(Icons.home),
+          title: Text("Home"),
+        ),
+        ListTile(
+          leading: Icon(Icons.settings),
+          title: Text("Settings"),
+        )
+      ],
+    );
+  }
+}
+
+class LeftDrawerWidget extends StatelessWidget {
+  const LeftDrawerWidget({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Drawer(
+      child: ListView(
+        children: const [
+          UserAccountsDrawerHeader(
+            accountName: Text("Superior Student"),
+            accountEmail: Text("student@superior.edu.pk"),
+          ),
+          MenuListTileWidget()
+        ],
+      ),
+    );
+  }
+}
+
+class RightDrawerWidget extends StatelessWidget {
+  const RightDrawerWidget({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Drawer(
+      child: ListView(
+        children: const [
+          DrawerHeader(
+            decoration: BoxDecoration(
+              color: Colors.deepPurple,
+            ),
+            child: Icon(
+              Icons.person,
+              size: 80,
+              color: Colors.white,
+            ),
+          ),
+          MenuListTileWidget()
+        ],
+      ),
+    );
+  }
+}
+
